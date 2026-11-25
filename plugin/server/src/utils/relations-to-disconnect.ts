@@ -84,12 +84,10 @@ export async function getRelationsToDisconnect<
   } as Modules.Documents.ServiceParams<TSchemaUID>['findFirst']
 
   const current = documentId
-    ? await strapi
-        .documents(contentType)
-        .findOne({
-          ...params,
-          documentId,
-        } as Modules.Documents.ServiceParams<TSchemaUID>['findOne'])
+    ? await strapi.documents(contentType).findOne({
+        ...params,
+        documentId,
+      } as Modules.Documents.ServiceParams<TSchemaUID>['findOne'])
     : await strapi.documents(contentType).findFirst(params)
 
   if (!current) {

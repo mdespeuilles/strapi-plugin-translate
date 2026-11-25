@@ -11,13 +11,12 @@ export class BatchTranslateManagerImpl implements BatchTranslateManager {
   }
 
   async bootstrap() {
-    // Resume paused jobs
-    const entities = await strapi.entityService.findMany(batchContentTypeUid, {
+    // Jobs still running when the server stopped were paused without changing
+    // their status: pick them up again
+    const entities = (await strapi.documents(batchContentTypeUid).findMany({
       filters: { status: 'running' },
-    })
-    if (Array.isArray(entities)) {
-      entities.forEach(this._resumeJob.bind(this))
-    }
+    })) as BatchTranslateJob[]
+    entities.forEach((entity) => this._resumeJob(entity))
   }
 
   async submitJob(params: {
@@ -27,7 +26,7 @@ export class BatchTranslateManagerImpl implements BatchTranslateManager {
     entityIds?: string[]
     autoPublish?: boolean
   }) {
-    const sameEntities = await strapi.service(batchContentTypeUid).find({
+    const sameJobs = await strapi.documents(batchContentTypeUid).count({
       filters: {
         status: { $in: ['running', 'created', 'setup'] },
         contentType: params.contentType,
@@ -35,7 +34,7 @@ export class BatchTranslateManagerImpl implements BatchTranslateManager {
         targetLocale: params.targetLocale,
       },
     })
-    if (sameEntities.length > 0) {
+    if (sameJobs > 0) {
       throw new Error('translate.batch-translate.job-already-exists')
     }
     const entity = (await strapi
@@ -87,14 +86,14 @@ export class BatchTranslateManagerImpl implements BatchTranslateManager {
     if (['running', 'paused'].includes(entity.status)) {
       const job = new BatchTranslateJobExecutor(entity)
 
-      const promise = job.start(true)
-      strapi.log.debug(JSON.stringify(entity))
       this.runningJobs.set(entity.documentId, job)
-      strapi.log.debug(this.runningJobs.get(entity.documentId).id)
 
-      promise.finally(() => {
-        this.runningJobs.delete(entity.documentId)
-      })
+      job
+        .start(true)
+        .catch((err) => strapi.log.error(err))
+        .finally(() => {
+          this.runningJobs.delete(entity.documentId)
+        })
     } else {
       throw new Error('translate.batch-translate.job-cannot-be-resumed')
     }

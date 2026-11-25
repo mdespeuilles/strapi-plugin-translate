@@ -152,12 +152,12 @@ describe('relation', () => {
         })
       })
 
-      it.skip('wrong locale of relation is not translated', async () => {
+      it('relation without a target locale version is not kept', async () => {
         // given
         const data = {
           documentId: 'a',
           id: 1,
-          related: { documentId: 'a', id: 2, related: undefined },
+          related: { documentId: 'missing', id: 2, related: undefined },
         }
         const schema = strapi.contentTypes['api::first.first']
         const targetLocale = 'de'
@@ -337,12 +337,12 @@ describe('relation', () => {
           related: [],
         })
       })
-      it.skip('wrong locale of relation is not translated', async () => {
+      it('relation without a target locale version is not kept', async () => {
         // given
         const data = {
           documentId: 'a',
           id: 1,
-          related: [{ documentId: 'a', id: 2, related: undefined }],
+          related: [{ documentId: 'missing', id: 2, related: undefined }],
         }
         const schema = strapi.contentTypes['api::first.first']
         const targetLocale = 'de'
@@ -506,12 +506,12 @@ describe('relation', () => {
         })
       })
 
-      it.skip('wrong locale of relation is not translated', async () => {
+      it('relation without a target locale version is not kept', async () => {
         // given
         const data = {
           documentId: 'a',
           id: 1,
-          related: { documentId: 'a', id: 2, related: undefined },
+          related: { documentId: 'missing', id: 2, related: undefined },
         }
         const schema = strapi.contentTypes['api::first.first']
         const targetLocale = 'de'
@@ -674,12 +674,12 @@ describe('relation', () => {
           related: [],
         })
       })
-      it.skip('wrong locale of relation is not translated', async () => {
+      it('relation without a target locale version is not kept', async () => {
         // given
         const data = {
           documentId: 'a',
           id: 1,
-          related: [{ documentId: 'a', id: 2, related: undefined }],
+          related: [{ documentId: 'missing', id: 2, related: undefined }],
         }
         const schema = strapi.contentTypes['api::first.first']
         const targetLocale = 'de'
@@ -831,12 +831,14 @@ describe('relation', () => {
           expect(relationsTranslated).toEqual(data)
         })
 
-        it.skip('wrong locale of relation is not translated', async () => {
+        it('relation without a target locale version is not kept', async () => {
           // given
           const data = {
             documentId: 'a',
             id: 1,
-            component: { related: { documentId: 'a', id: 2, locale: 'de' } },
+            component: {
+              related: { documentId: 'missing', id: 2, locale: 'de' },
+            },
           }
           const schema = strapi.contentTypes['api::first.notRepeated']
           const targetLocale = 'de'
@@ -945,13 +947,13 @@ describe('relation', () => {
             expect(relationsTranslated).toEqual(data)
           })
 
-          it.skip('wrong locale of relation is not translated', async () => {
+          it('relation without a target locale version is not kept', async () => {
             // given
             const data = {
               documentId: 'a',
               id: 1,
               component: [
-                { related: { documentId: 'a', id: 2, locale: 'de' } },
+                { related: { documentId: 'missing', id: 2, locale: 'de' } },
               ],
             }
             const schema = strapi.contentTypes['api::first.repeated']
@@ -1092,12 +1094,14 @@ describe('relation', () => {
           expect(relationsTranslated).toEqual(data)
         })
 
-        it.skip('wrong locale of relation is not translated', async () => {
+        it('relation without a target locale version is not kept', async () => {
           // given
           const data = {
             documentId: 'a',
             id: 1,
-            component: { related: [{ documentId: 'a', id: 2, locale: 'de' }] },
+            component: {
+              related: [{ documentId: 'missing', id: 2, locale: 'de' }],
+            },
           }
           const schema = strapi.contentTypes['api::first.notRepeated']
           const targetLocale = 'de'
@@ -1224,13 +1228,13 @@ describe('relation', () => {
             expect(relationsTranslated).toEqual(data)
           })
 
-          it.skip('wrong locale of relation is not translated', async () => {
+          it('relation without a target locale version is not kept', async () => {
             // given
             const data = {
               documentId: 'a',
               id: 1,
               component: [
-                { related: [{ documentId: 'a', id: 2, locale: 'de' }] },
+                { related: [{ documentId: 'missing', id: 2, locale: 'de' }] },
               ],
             }
             const schema = strapi.contentTypes['api::first.repeated']
@@ -1406,7 +1410,7 @@ describe('relation', () => {
           expect(relationsTranslated).toEqual(data)
         })
 
-        it.skip('wrong locale of relation is not translated', async () => {
+        it('relation without a target locale version is not kept', async () => {
           // given
           const data = {
             documentId: 'a',
@@ -1414,11 +1418,11 @@ describe('relation', () => {
             dynamic_zone: [
               {
                 __component: 'shared.first',
-                related: { documentId: 'a', id: 2, locale: 'de' },
+                related: { documentId: 'missing', id: 2, locale: 'de' },
               },
               {
                 __component: 'shared.second',
-                related: { documentId: 'a', id: 2, locale: 'de' },
+                related: { documentId: 'missing', id: 2, locale: 'de' },
               },
             ],
           }
@@ -1607,7 +1611,7 @@ describe('relation', () => {
           expect(relationsTranslated).toEqual(data)
         })
 
-        it.skip('wrong locale of relation is not translated', async () => {
+        it('relation without a target locale version is not kept', async () => {
           // given
           const data = {
             documentId: 'a',
@@ -1615,11 +1619,11 @@ describe('relation', () => {
             dynamic_zone: [
               {
                 __component: 'shared.first',
-                related: [{ documentId: 'a', id: 2, locale: 'de' }],
+                related: [{ documentId: 'missing', id: 2, locale: 'de' }],
               },
               {
                 __component: 'shared.second',
-                related: [{ documentId: 'a', id: 2, locale: 'de' }],
+                related: [{ documentId: 'missing', id: 2, locale: 'de' }],
               },
             ],
           }

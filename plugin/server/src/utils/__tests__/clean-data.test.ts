@@ -145,7 +145,7 @@ describe('clean data', () => {
     'empty relation is kept to clear the target (forFrontend: %s)',
     (forFrontend) => {
       // given
-      const data = { documentId: 'a', related: [] }
+      const data = { documentId: 'a', id: 1, related: [] }
       const schema = strapi.contentTypes['api::complex.relation-multiple']
 
       // when
@@ -160,7 +160,7 @@ describe('clean data', () => {
     'empty single relation is kept to clear the target (forFrontend: %s)',
     (forFrontend) => {
       // given
-      const data = { documentId: 'a', related: null }
+      const data = { documentId: 'a', id: 1, related: null }
       const schema = strapi.contentTypes['api::complex.relation']
 
       // when

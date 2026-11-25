@@ -100,14 +100,16 @@ const initSetup = async ({
           },
           ...params,
         }),
-      findFirst: (params) => mock.db.query(uid).findMany(params)[0],
+      findFirst: async (params) =>
+        (await mock.db.query(uid).findMany(params))[0],
       findMany: (params) =>
         mock.db.query(uid).findMany({ ...params, where: params.filters }),
       create: (params) => mock.db.query(uid).create(params),
       update: (params) => mock.db.query(uid).update(params),
       delete: (params) => mock.db.query(uid).delete(params),
-      clone: (params) => mock.db.query(uid).delete(params),
-      count: (params) => mock.db.query(uid).delete(params),
+      clone: (params) => mock.db.query(uid).create(params),
+      count: (params) =>
+        mock.db.query(uid).count({ ...params, where: params?.filters }),
       publish: draftAndPublishEnabled(uid)
         ? (params) => mock.db.query(uid).update(params)
         : undefined,
@@ -258,17 +260,6 @@ const initSetup = async ({
       },
     },
     documents,
-    entityService: {
-      findOne: (uid, id, params) =>
-        mock.db.query(uid).findOne({ where: { id: { $eq: id } }, ...params }),
-      findMany: (uid, params) =>
-        mock.db
-          .query(uid)
-          .findMany({ ...params, where: params.filters }) as any,
-      create: (uid, params) => mock.db.query(uid).create(params),
-      update: (uid, id, params) => mock.db.query(uid).update(params),
-      delete: (uid, id, params) => mock.db.query(uid).delete(params),
-    } as any,
     service(uid) {
       const [handler, collection] = uid.split('::')
       if (handler === 'plugin') {
