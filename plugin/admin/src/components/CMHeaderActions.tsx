@@ -174,11 +174,16 @@ export const TranslateFromAnotherLocaleAction: HeaderActionComponent = ({
 
     const { data: translatedData } = response
 
-    const parsedData = parseRelations(translatedData.data, {
-      contentType: schema,
-      components,
-      editLayout,
-    })
+    const parsedData = parseRelations(
+      translatedData.data,
+      {
+        contentType: schema,
+        components,
+        editLayout,
+      },
+      null,
+      translatedData.meta?.relationsToDisconnect
+    )
 
     ;[
       'createdBy',

@@ -141,6 +141,36 @@ describe('clean data', () => {
     })
   })
 
+  it.each([false, true])(
+    'empty relation is kept to clear the target (forFrontend: %s)',
+    (forFrontend) => {
+      // given
+      const data = { documentId: 'a', related: [] }
+      const schema = strapi.contentTypes['api::complex.relation-multiple']
+
+      // when
+      const cleanedData = cleanData(data, schema, forFrontend)
+
+      // then
+      expect(cleanedData).toEqual({ documentId: 'a', related: [] })
+    }
+  )
+
+  it.each([false, true])(
+    'empty single relation is kept to clear the target (forFrontend: %s)',
+    (forFrontend) => {
+      // given
+      const data = { documentId: 'a', related: null }
+      const schema = strapi.contentTypes['api::complex.relation']
+
+      // when
+      const cleanedData = cleanData(data, schema, forFrontend)
+
+      // then
+      expect(cleanedData).toEqual({ documentId: 'a', related: null })
+    }
+  )
+
   it('component other field removed', () => {
     // given
     const data = {

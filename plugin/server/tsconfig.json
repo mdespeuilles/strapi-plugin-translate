@@ -7,6 +7,7 @@
     "resolveJsonModule": true,
     "paths": {
       "@shared/*": ["../shared/*"]
-    }
+    },
+    "lib": ["ES2022"]
   }
 }

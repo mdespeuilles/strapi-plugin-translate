@@ -6,6 +6,7 @@ import { TRANSLATE_PRIORITY_DIRECT_TRANSLATION } from '../utils/constants'
 import { filterAllDeletedFields } from '../utils/delete-fields'
 import { populateAll } from '../utils/populate-all'
 import { cleanData } from '../utils/clean-data'
+import { getRelationsToDisconnect } from '../utils/relations-to-disconnect'
 import { updateUids } from '../utils/update-uids'
 import { z } from 'zod'
 import { TranslateConfig } from '../config'
@@ -96,7 +97,14 @@ export default ({ strapi }: { strapi: Core.Strapi }): TranslateController => ({
         priority: TRANSLATE_PRIORITY_DIRECT_TRANSLATION,
       })
 
-      return { data: translatedData }
+      const relationsToDisconnect = await getRelationsToDisconnect({
+        contentType,
+        documentId,
+        targetLocale,
+        translatedData,
+      })
+
+      return { data: translatedData, meta: { relationsToDisconnect } }
     } catch (error) {
       return handleContextError(ctx, error, 'TranslateEntity.error')
     }

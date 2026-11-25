@@ -1,6 +1,7 @@
 import { Data, Schema, UID } from '@strapi/strapi'
 import { EditLayout } from '@strapi/content-manager/strapi-admin'
-import _, { cloneDeep, flattenDeep, get, has, set, unset } from 'lodash'
+import { cloneDeep, flattenDeep, get, has, set, unset } from 'lodash'
+import { RelationReference } from '@shared/types/relations'
 
 /**
  * Function is copied from https://github.com/strapi/strapi/blob/v4.5.3/packages/core/admin/admin/src/content-manager/components/RelationInputDataManager/utils/getRelationLink.js
@@ -30,6 +31,16 @@ const normalizeRelation = (
   return nextRelation
 }
 
+/**
+ * What the Content Manager sends to the API for a relation: it replaces every
+ * form value holding `apiData` with it on save.
+ */
+const toApiData = ({ id, documentId, locale }: RelationReference) => ({
+  id,
+  documentId,
+  locale,
+})
+
 function parseRelation(
   data: Schema.Attribute.Value<Schema.Attribute.AnyAttribute>,
   relationEditLayout: any
@@ -46,10 +57,15 @@ function parseRelation(
 }
 
 /**
+ * Turn translated data into Content Manager form values. A relation field there
+ * holds `{ connect, disconnect }`: the translated relations are connected, and the
+ * ones the target locale already has but the translation drops are disconnected.
+ *
  * @param data The data
  * @param schema The schema of the data
  * @param component The name of a component or null for the content type
- * @returns {{path: string, toOneRelation: boolean, mainField: string}[]}
+ * @param relationsToDisconnect Per top-level relation field, the relations to
+ *  disconnect from the target locale (components start empty, so need none)
  */
 export default function parseRelations(
   data: Data.Entity,
@@ -58,7 +74,8 @@ export default function parseRelations(
     components: Schema.Components
     editLayout: EditLayout
   },
-  component: UID.Component | null = null
+  component: UID.Component | null = null,
+  relationsToDisconnect: Record<string, RelationReference[]> = {}
 ) {
   const result: any = cloneDeep(data)
 
@@ -80,31 +97,18 @@ export default function parseRelations(
           (editLayout) => editLayout.name == attribute
         )
 
-        if (Array.isArray(value)) {
-          unset(result, attribute)
-          set(
-            result,
-            `${attribute}.connect`,
-            value.map((r, index) => ({
-              __temp_key__: `a${index}`,
-              ...parseRelation(r, relationEditLayout),
-            }))
-          )
-        } else {
-          unset(result, attribute)
-          set(
-            result,
-            `${attribute}.connect`,
-            value
-              ? [
-                  {
-                    __temp_key__: 'a0',
-                    ...parseRelation(value, relationEditLayout),
-                  },
-                ]
-              : []
-          )
-        }
+        const relations = Array.isArray(value) ? value : value ? [value] : []
+        unset(result, attribute)
+        set(result, attribute, {
+          connect: relations.map((relation, index) => ({
+            __temp_key__: `a${index}`,
+            ...parseRelation(relation, relationEditLayout),
+            apiData: toApiData(relation),
+          })),
+          disconnect: (relationsToDisconnect[attribute] ?? []).map(
+            (relation) => ({ id: relation.id, apiData: toApiData(relation) })
+          ),
+        })
       } else if (attributeData.type === 'component') {
         set(
           result,

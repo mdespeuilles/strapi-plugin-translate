@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals'
 import { Core } from '@strapi/strapi'
 import service from '../untranslated'
 

@@ -2,6 +2,7 @@ import { UID, Data } from '@strapi/strapi'
 import { errors } from '@strapi/utils'
 import { BatchTranslateJob } from '../types/batch-translate-job'
 import { ReportData } from '@shared/types/report'
+import { RelationReference } from '@shared/types/relations'
 
 /**
  * POST /translate/entity - Translate a single entity
@@ -18,7 +19,16 @@ export declare namespace TranslateEntity {
   }
 
   export type Response =
-    | { data: Data.ContentType }
+    | {
+        data: Data.ContentType
+        meta: {
+          /**
+           * Per top-level relation field, the relations the target locale has
+           * that the translation does not keep
+           */
+          relationsToDisconnect: Record<string, RelationReference[]>
+        }
+      }
     | {
         data: null
         error: errors.ApplicationError

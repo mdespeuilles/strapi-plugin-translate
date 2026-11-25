@@ -82,11 +82,6 @@ export function cleanData<
         resultData[attr] = mediaFiles.id
       }
     }
-
-    // Remove attribute if it's an empty array
-    if (Array.isArray(resultData[attr]) && resultData[attr].length === 0) {
-      delete resultData[attr]
-    }
   })
 
   return resultData as unknown as Utils.If<

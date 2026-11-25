@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import setup from '../../../__mocks__/initSetup'
 import { BatchTranslateJobExecutor } from '../BatchTranslateJobExecutor'
 
@@ -112,8 +113,7 @@ describe('BatchTranslateJob', () => {
     })
 
     it("cancel updates the status to 'cancelled' if it is running", async () => {
-      const f = jest.fn()
-      BatchTranslateJobExecutor.prototype.updateStatus = f
+      const f = jest.spyOn(job, 'updateStatus').mockResolvedValue(undefined)
 
       await job.cancel()
 
@@ -121,8 +121,7 @@ describe('BatchTranslateJob', () => {
     })
 
     it('cancel does nothing if job is not running', async () => {
-      const f = jest.fn()
-      BatchTranslateJobExecutor.prototype.updateStatus = f
+      const f = jest.spyOn(job, 'updateStatus').mockResolvedValue(undefined)
 
       job.status = 'finished'
       await job.cancel()
@@ -131,8 +130,7 @@ describe('BatchTranslateJob', () => {
     })
 
     it("pause updates the status to 'paused' if it is running", async () => {
-      const f = jest.fn()
-      BatchTranslateJobExecutor.prototype.updateStatus = f
+      const f = jest.spyOn(job, 'updateStatus').mockResolvedValue(undefined)
 
       await job.pause()
 
@@ -140,8 +138,7 @@ describe('BatchTranslateJob', () => {
     })
 
     it('pause does nothing if job is not running', async () => {
-      const f = jest.fn()
-      BatchTranslateJobExecutor.prototype.updateStatus = f
+      const f = jest.spyOn(job, 'updateStatus').mockResolvedValue(undefined)
 
       job.status = 'finished'
 
@@ -151,8 +148,11 @@ describe('BatchTranslateJob', () => {
     })
 
     it('setup changes the status to setup and then running', async () => {
-      const f = jest.fn((status) => (job.status = status))
-      BatchTranslateJobExecutor.prototype.updateStatus = f
+      const f = jest
+        .spyOn(job, 'updateStatus')
+        .mockImplementation(async (status) => {
+          job.status = status
+        })
 
       await job.setup()
 
@@ -161,8 +161,11 @@ describe('BatchTranslateJob', () => {
     })
 
     it('start changes the status to finished after successful termination', async () => {
-      const f = jest.fn((status) => (job.status = status))
-      BatchTranslateJobExecutor.prototype.updateStatus = f
+      const f = jest
+        .spyOn(job, 'updateStatus')
+        .mockImplementation(async (status) => {
+          job.status = status
+        })
 
       await job.start()
 
