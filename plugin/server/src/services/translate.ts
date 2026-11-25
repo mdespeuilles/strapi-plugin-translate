@@ -113,13 +113,17 @@ export default ({ strapi }: { strapi: Core.Strapi }): TranslateService => ({
       throw new Error('Content type is neither a collection nor a single type')
     }
 
-    const targetEntityExists =
-      (await strapi.documents(params.contentType).count({
-        filters: collectionType
-          ? ({ documentId: { $eq: params.documentId } } as any)
-          : undefined,
-        locale: params.targetLocale,
-      })) > 0
+    const targetEntityExists = collectionType
+      ? Boolean(
+          await strapi.documents(params.contentType).findOne({
+            documentId: params.documentId,
+            locale: params.targetLocale,
+            fields: ['documentId'],
+          })
+        )
+      : (await strapi
+          .documents(params.contentType)
+          .count({ locale: params.targetLocale })) > 0
 
     if (params.create && targetEntityExists && !params.updateExisting) {
       throw new Error('Target entity already exists')

@@ -120,8 +120,11 @@ async function translateComponent<TSchemaUID extends UID.Component>(
   return translateRelations(data, componentSchema, targetLocale)
 }
 
+type RelationValue =
+  Modules.Documents.AnyDocument | Modules.Documents.AnyDocument[]
+
 async function translateRelation(
-  attributeData: any,
+  attributeData: RelationValue,
   attributeSchema: Schema.Attribute.Relation,
   targetLocale: string
 ) {
@@ -177,11 +180,12 @@ async function translateRelation(
       )
     } else if (
       ['oneToOne', 'manyToOne'].includes(attributeSchema.relation) &&
-      attributeData
+      attributeData &&
+      !Array.isArray(attributeData)
     ) {
       return getRelevantLocalization(
         attributeSchema['target'],
-        attributeData['documentId'],
+        attributeData.documentId,
         targetLocale
       )
     }

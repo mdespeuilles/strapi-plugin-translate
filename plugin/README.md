@@ -279,9 +279,8 @@ return reduceFunction(
 The translate function receives the format of the text as `plain`, `markdown`, `html` or `jsonb` (Blocks Content Type). If your translation provider supports only html, but no markdown, you can use the `format` service to change the format before translating to `html` and afterwards back to `markdown`. Similarly you can convert `jsonb` to `html`:
 
 ```js
-const { markdownToHtml, htmlToMarkdown, blocksToHtml, htmlToBlocks } = strapi.service(
-  'plugin::translate.format'
-)
+const { markdownToHtml, htmlToMarkdown, blocksToHtml, htmlToBlocks } =
+  strapi.service('plugin::translate.format')
 
 if (format === 'markdown') {
   return htmlToMarkdown(providerClient.translateTexts(markdownToHtml(text)))

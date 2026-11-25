@@ -3,6 +3,7 @@ import { PLUGIN_ID } from './pluginId'
 import { Initializer } from './components/Initializer'
 import PluginIcon from './components/PluginIcon'
 import { PluginDefinition } from '@strapi/strapi/admin'
+import type { ContentManagerPlugin } from '@strapi/content-manager/strapi-admin'
 import mutateCTBContentTypeSchema from './utils/mutateCTBContentTypeSchema'
 import TRANSLATABLE_FIELDS from './utils/translatableFields'
 import { get } from 'lodash'
@@ -31,14 +32,16 @@ const admin: PluginDefinition = {
     })
   },
   bootstrap(app) {
-    const contentManager = app.getPlugin('content-manager') as any
-    contentManager.apis.addDocumentHeaderAction([
+    const contentManagerApis = app.getPlugin('content-manager')
+      .apis as ContentManagerPlugin['config']['apis']
+    contentManagerApis.addDocumentHeaderAction([
       TranslateFromAnotherLocaleAction,
     ])
 
     const ctbPlugin = app.getPlugin('content-type-builder')
 
     if (ctbPlugin) {
+      // The Content-Type Builder does not export the type of its forms API
       const ctbFormsAPI = ctbPlugin.apis.forms as any
       ctbFormsAPI.addContentTypeSchemaMutation(mutateCTBContentTypeSchema)
 

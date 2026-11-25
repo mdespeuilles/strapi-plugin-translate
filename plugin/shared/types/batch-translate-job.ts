@@ -1,5 +1,13 @@
 import { Data, UID } from '@strapi/strapi'
 
+/**
+ * Why a batch translation job failed, stored as JSON on the job
+ */
+export interface BatchTranslateJobFailureReason {
+  message: string
+  name?: string
+}
+
 export interface BatchTranslateJob {
   documentId: Data.DocumentID
   id: Data.ID
@@ -13,7 +21,7 @@ export interface BatchTranslateJob {
     | 'cancelled'
     | 'failed'
   progress: number
-  failureReason?: any | null
+  failureReason?: BatchTranslateJobFailureReason | null
   entityIds?: Data.DocumentID[]
   sourceLocale: string
   targetLocale: string

@@ -1,5 +1,8 @@
 import { Data, Schema, UID } from '@strapi/strapi'
-import { EditLayout } from '@strapi/content-manager/strapi-admin'
+import type {
+  EditFieldLayout,
+  EditLayout,
+} from '@strapi/content-manager/strapi-admin'
 import { cloneDeep, flattenDeep, get, has, set, unset } from 'lodash'
 import { RelationReference } from '@shared/types/relations'
 
@@ -21,8 +24,11 @@ export function getRelationLink(targetModel: string, documentId?: string) {
  * @param {*} options
  * @returns
  */
+type TranslatedRelation = RelationReference & Record<string, unknown>
+type RelationFieldLayout = Extract<EditFieldLayout, { type: 'relation' }>
+
 const normalizeRelation = (
-  relation: any,
+  relation: TranslatedRelation,
   { mainFieldName, targetModel }: { mainFieldName: string; targetModel: string }
 ) => {
   const nextRelation = { ...relation }
@@ -42,18 +48,19 @@ const toApiData = ({ id, documentId, locale }: RelationReference) => ({
 })
 
 function parseRelation(
-  data: Schema.Attribute.Value<Schema.Attribute.AnyAttribute>,
-  relationEditLayout: any
+  relation: TranslatedRelation,
+  relationEditLayout: RelationFieldLayout | undefined
 ) {
   if (!relationEditLayout) {
-    // In this case, strapi is <4.5
-    return data
+    // The field is not in the edit view layout, so there is nothing to label
+    return relation
   }
-  const result = normalizeRelation(data, {
-    mainFieldName: relationEditLayout.mainField.name,
-    targetModel: relationEditLayout.attribute.targetModel,
+  const { attribute, mainField } = relationEditLayout
+  return normalizeRelation(relation, {
+    // the Content Manager falls back to the documentId too
+    mainFieldName: mainField?.name ?? 'documentId',
+    targetModel: 'target' in attribute ? attribute.target : '',
   })
-  return result
 }
 
 /**
@@ -94,7 +101,8 @@ export default function parseRelations(
 
       if (attributeData.type === 'relation') {
         const relationEditLayout = flattenDeep(currentLayout.layout).find(
-          (editLayout) => editLayout.name == attribute
+          (editLayout): editLayout is RelationFieldLayout =>
+            editLayout.name === attribute && editLayout.type === 'relation'
         )
 
         const relations = Array.isArray(value) ? value : value ? [value] : []

@@ -215,7 +215,7 @@ CollectionRow.propTypes = {
         complete: PropTypes.bool,
         job: PropTypes.shape({
           status: PropTypes.string,
-          failureReason: PropTypes.objectOf(PropTypes.string),
+          failureReason: PropTypes.shape({ message: PropTypes.string }),
         }),
       })
     ),

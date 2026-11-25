@@ -5,11 +5,23 @@ import {
 } from '../../utils/constants'
 import { getService } from '../../utils/get-service'
 import { populateAll } from '../../utils/populate-all'
-import { BatchTranslateJob } from '@shared/types/batch-translate-job'
+import {
+  BatchTranslateJob,
+  BatchTranslateJobFailureReason,
+} from '@shared/types/batch-translate-job'
 import {
   isContentTypeUID,
   isLocalizedContentType,
 } from '../../utils/content-type'
+
+/**
+ * An Error does not survive JSON serialization: keep what the admin shows.
+ * The stack stays in the server logs.
+ */
+const toFailureReason = (error: unknown): BatchTranslateJobFailureReason =>
+  error instanceof Error
+    ? { message: error.message, name: error.name }
+    : { message: String(error) }
 
 export class BatchTranslateJobExecutor {
   totalEntities: number
@@ -173,7 +185,7 @@ export class BatchTranslateJobExecutor {
     }
 
     await this.setup().catch((error) => {
-      this.updateStatus('failed', { failureReason: error })
+      this.updateStatus('failed', { failureReason: toFailureReason(error) })
       throw error
     })
 
@@ -270,11 +282,7 @@ export class BatchTranslateJobExecutor {
           })
         }
         await this.updateStatus('failed', {
-          failureReason: {
-            message: error.message,
-            stack: error.stack,
-            name: error.name,
-          },
+          failureReason: toFailureReason(error),
         })
         clearInterval(this.intervalId)
         throw new Error(
