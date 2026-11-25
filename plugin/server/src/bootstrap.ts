@@ -8,6 +8,30 @@ import { TranslateConfig } from './config'
 import { TranslateProvider } from '../../shared/types/provider'
 import dummyProvider from './utils/dummy-provider'
 
+// Accepts a short name ("deepl"), resolved to this fork's providers first, then
+// to the historical unscoped packages, or a full package name.
+const PROVIDER_PREFIXES = [
+  '@mdespeuilles/strapi-provider-translate-',
+  'strapi-provider-translate-',
+]
+
+const resolveProvider = (providerName: string): string => {
+  const candidates = [
+    ...PROVIDER_PREFIXES.map((prefix) => `${prefix}${providerName}`),
+    providerName,
+  ]
+  for (const candidate of candidates) {
+    try {
+      return require.resolve(candidate)
+    } catch (error) {
+      if (error.code !== 'MODULE_NOT_FOUND') {
+        throw error
+      }
+    }
+  }
+  return providerName
+}
+
 const createProvider = async (translateConfig: TranslateConfig) => {
   const providerName = toLower(translateConfig.provider)
   let provider: TranslateProvider
@@ -15,17 +39,7 @@ const createProvider = async (translateConfig: TranslateConfig) => {
   if (providerName === 'dummy') {
     provider = dummyProvider
   } else {
-    let modulePath: string
-    try {
-      modulePath = require.resolve(`strapi-provider-translate-${providerName}`)
-    } catch (error) {
-      if (error.code === 'MODULE_NOT_FOUND') {
-        modulePath = providerName
-      } else {
-        throw error
-      }
-    }
-
+    const modulePath = resolveProvider(providerName)
     try {
       provider = require(modulePath)
     } catch (err) {

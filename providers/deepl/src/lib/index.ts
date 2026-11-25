@@ -1,6 +1,6 @@
 import { SourceLanguageCode, TargetLanguageCode, Translator } from 'deepl-node'
 import Bottleneck from 'bottleneck'
-import { TranslateProvider } from 'strapi-plugin-translate/shared'
+import { TranslateProvider } from '@mdespeuilles/strapi-plugin-translate/shared'
 
 import {
   DEEPL_PRIORITY_DEFAULT,
@@ -34,10 +34,9 @@ export default {
       typeof providerOptions.apiOptions === 'object'
         ? providerOptions.apiOptions
         : {}
-    const glossaries =
-      Array.isArray(providerOptions.glossaries)
-        ? providerOptions.glossaries
-        : []
+    const glossaries = Array.isArray(providerOptions.glossaries)
+      ? providerOptions.glossaries
+      : []
 
     const client = new Translator(apiKey, {
       serverUrl: apiUrl,
@@ -98,15 +97,27 @@ export default {
           maxByteSize: DEEPL_API_ROUGH_MAX_REQUEST_SIZE,
         })
 
-        const parsedSourceLocale = parseLocale(sourceLocale, localeMap, 'source')
-        const parsedTargetLocale = parseLocale(targetLocale, localeMap, 'target')
+        const parsedSourceLocale = parseLocale(
+          sourceLocale,
+          localeMap,
+          'source'
+        )
+        const parsedTargetLocale = parseLocale(
+          targetLocale,
+          localeMap,
+          'target'
+        )
 
         const glossary = glossaries.find(
-          (g) => g.target_lang === parsedTargetLocale && g.source_lang === parsedSourceLocale
+          (g) =>
+            g.target_lang === parsedTargetLocale &&
+            g.source_lang === parsedSourceLocale
         )?.id
 
         if (apiOptions.glossary) {
-          console.warn('Glossary provided in apiOptions will be ignored and overwritten by the actual glossary that should be used for this translation.')
+          console.warn(
+            'Glossary provided in apiOptions will be ignored and overwritten by the actual glossary that should be used for this translation.'
+          )
         }
 
         const result = reduceFunction(

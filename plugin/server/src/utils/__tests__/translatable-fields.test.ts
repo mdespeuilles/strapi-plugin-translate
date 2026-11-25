@@ -124,21 +124,16 @@ describe('translatable fields', () => {
 
     it('text field with empty string not translated', async () => {
       // given
-      const data = { field: '' }
-      const schema = {
+      const data = { documentId: 'a', id: 1, field: '' }
+      const schema: Schema.Attribute.Text = {
         type: 'text',
         pluginOptions: { translate: { translate: 'translate' } },
       }
       const attr = 'field'
-      const translatedFieldTypes = ['text']
+      strapi.config.set('plugin::translate.translatedFieldTypes', ['text'])
 
       // when
-      const translatedField = await getTranslateFields(
-        data,
-        schema,
-        attr,
-        translatedFieldTypes
-      )
+      const translatedField = await getTranslateFields(data, schema, attr)
 
       // then
       expect(translatedField).toBeNull()
@@ -146,21 +141,16 @@ describe('translatable fields', () => {
 
     it('text field with whitespace string not translated', async () => {
       // given
-      const data = { field: '   ' }
-      const schema = {
+      const data = { documentId: 'a', id: 1, field: '   ' }
+      const schema: Schema.Attribute.Text = {
         type: 'text',
         pluginOptions: { translate: { translate: 'translate' } },
       }
       const attr = 'field'
-      const translatedFieldTypes = ['text']
+      strapi.config.set('plugin::translate.translatedFieldTypes', ['text'])
 
       // when
-      const translatedField = await getTranslateFields(
-        data,
-        schema,
-        attr,
-        translatedFieldTypes
-      )
+      const translatedField = await getTranslateFields(data, schema, attr)
 
       // then
       expect(translatedField).toBeNull()

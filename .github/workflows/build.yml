@@ -28,15 +28,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Install dependencies
         run: npm ci
       - name: Build strapi-plugin-translate
-        run: npm run build --workspace strapi-plugin-translate
+        run: npm run build --workspace @mdespeuilles/strapi-plugin-translate
       - name: Build strapi-provider-translate-deepl
-        run: npm run build --workspace strapi-provider-translate-deepl
-      - name: Build strapi-provider-translate-libretranslate
-        run: npm run build --workspace strapi-provider-translate-libretranslate
+        run: npm run build --workspace @mdespeuilles/strapi-provider-translate-deepl
       - name: Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

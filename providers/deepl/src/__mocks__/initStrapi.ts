@@ -1,5 +1,6 @@
+import { jest } from '@jest/globals'
 import { get, set } from 'lodash'
-import translatePlugin from 'strapi-plugin-translate/strapi-server'
+import translatePlugin from '@mdespeuilles/strapi-plugin-translate/strapi-server'
 
 const initSetup = async () => {
   const translate = translatePlugin()
@@ -40,7 +41,9 @@ const initSetup = async () => {
       const [handler, collection] = uid.split('::')
       if (handler === 'plugin') {
         const [plugin, service] = collection.split('.')
-        return mock.plugins[plugin as any].services[service]({
+        const services = mock.plugins[plugin as keyof typeof mock.plugins]
+          .services as Record<string, (args: { strapi: unknown }) => unknown>
+        return services[service]({
           strapi: mock.getRef(),
         })
       }

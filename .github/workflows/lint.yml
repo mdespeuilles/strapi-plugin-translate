@@ -8,7 +8,7 @@ jobs:
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - name: Install modules
         run: npm ci
@@ -22,22 +22,18 @@ jobs:
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - name: Install modules
         run: npm ci
       - name: Build strapi-plugin-translate
-        run: npm run build --workspace strapi-plugin-translate
+        run: npm run build --workspace @mdespeuilles/strapi-plugin-translate
       - name: Build strapi-provider-translate-deepl
-        run: npm run build --workspace strapi-provider-translate-deepl
-      - name: Build strapi-provider-translate-libretranslate
-        run: npm run build --workspace strapi-provider-translate-libretranslate
+        run: npm run build --workspace @mdespeuilles/strapi-provider-translate-deepl
       - name: Verify plugin with strapi-plugin
-        run: npm run verify --workspace strapi-plugin-translate
+        run: npm run verify --workspace @mdespeuilles/strapi-plugin-translate
       - name: Verify strapi-provider-translate-deepl
-        run: npm run verify --workspace strapi-provider-translate-deepl
-      - name: Verify strapi-provider-translate-libretranslate
-        run: npm run verify --workspace strapi-provider-translate-libretranslate
+        run: npm run verify --workspace @mdespeuilles/strapi-provider-translate-deepl
 
   commitlint:
     runs-on: ubuntu-latest

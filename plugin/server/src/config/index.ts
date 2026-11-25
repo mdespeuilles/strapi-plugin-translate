@@ -2,8 +2,7 @@ import { FieldFormat } from '../../../shared/types/formats'
 import { TranslateProviderOptions } from '../../../shared/types/provider'
 
 export type TranslatedFieldType =
-  | string
-  | { type: string; format?: FieldFormat }
+  string | { type: string; format?: FieldFormat }
 
 export type TranslateConfig = {
   provider: string

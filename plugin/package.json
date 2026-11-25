@@ -1,5 +1,5 @@
 {
-  "name": "strapi-plugin-translate",
+  "name": "@mdespeuilles/strapi-plugin-translate",
   "version": "0.0.0-semantically-released",
   "description": "Strapi plugin for managing and automating translation of content",
   "keywords": [
@@ -59,10 +59,10 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.0",
-    "@strapi/i18n": "5.33.0",
+    "@strapi/i18n": "5.64.0",
     "@strapi/sdk-plugin": "^5.2.8",
-    "@strapi/strapi": "5.33.0",
-    "@strapi/typescript-utils": "5.33.0",
+    "@strapi/strapi": "5.64.0",
+    "@strapi/typescript-utils": "5.64.0",
     "@types/jsdom": "^21.1.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -93,16 +93,16 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/fekide/strapi-plugin-translate.git"
+    "url": "git+https://github.com/mdespeuilles/strapi-plugin-translate.git"
   },
   "engines": {
-    "node": ">=18 <=22",
+    "node": ">=20",
     "npm": ">=6.0.0"
   },
   "bugs": {
-    "url": "https://github.com/fekide/strapi-plugin-translate/issues"
+    "url": "https://github.com/mdespeuilles/strapi-plugin-translate/issues"
   },
-  "homepage": "https://github.com/fekide/strapi-plugin-translate#readme",
+  "homepage": "https://github.com/mdespeuilles/strapi-plugin-translate#readme",
   "author": {
     "name": "Felix Haase",
     "email": "felix.haase@feki.de"
@@ -112,5 +112,8 @@
       "name": "Yannick Lang",
       "email": "yannick.lang@feki.de"
     }
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

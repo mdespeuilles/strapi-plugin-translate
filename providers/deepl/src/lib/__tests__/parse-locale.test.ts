@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals'
 import i18n from '@strapi/i18n/strapi-server'
 import { parseLocale } from '../parse-locale'
 

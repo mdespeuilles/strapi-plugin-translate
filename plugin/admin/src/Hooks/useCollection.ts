@@ -56,7 +56,7 @@ export function useCollection() {
 
   // Start refreshing the collections when a collection is being indexed
   useEffect(() => {
-    let interval: NodeJS.Timer | undefined
+    let interval: ReturnType<typeof setInterval> | undefined
 
     if (realTimeReports) {
       interval = setInterval(() => {

@@ -1,6 +1,16 @@
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals'
 import { URLSearchParams } from 'url'
 import { faker } from '@faker-js/faker'
-import { stringByteLength } from 'strapi-plugin-translate/strapi-server'
+import { stringByteLength } from '@mdespeuilles/strapi-plugin-translate/strapi-server'
 import {
   DefaultBodyType,
   http,
@@ -21,7 +31,7 @@ import { SetupServer } from 'msw/node'
 import {
   InitializedProvider,
   TranslateProviderTranslationArguments,
-} from 'strapi-plugin-translate/shared'
+} from '@mdespeuilles/strapi-plugin-translate/shared'
 import { TranslateTextOptions } from 'deepl-node'
 import setup from '../../__mocks__/initStrapi'
 
@@ -616,7 +626,9 @@ describe('deepl provider', () => {
     })
 
     it('ignores glossary in apiOptions and logs a warning', async () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {})
 
       const deeplProvider = provider.init({
         apiKey: authKey,
