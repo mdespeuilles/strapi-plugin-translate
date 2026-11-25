@@ -124,14 +124,24 @@ export default ({ strapi }: { strapi: Core.Strapi }): TranslateController => ({
       return ctx.notFound('corresponding content type not found')
     }
 
-    ctx.body = {
-      data: await getService('translate').batchTranslate({
-        contentType,
-        sourceLocale,
-        targetLocale,
-        entityIds,
-        autoPublish,
-      }),
+    try {
+      ctx.body = {
+        data: await getService('translate').batchTranslate({
+          contentType,
+          sourceLocale,
+          targetLocale,
+          entityIds,
+          autoPublish,
+        }),
+      }
+    } catch (error) {
+      if (
+        typeof error.message === 'string' &&
+        error.message.startsWith('translate')
+      ) {
+        return ctx.badRequest(error.message)
+      }
+      return handleContextError(ctx, error, 'batch-translate.error')
     }
   },
   async translateBatchPauseJob(ctx) {
